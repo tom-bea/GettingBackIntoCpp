@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>
+#include "Iterator.h"
 #include <iostream>
 
 template <class Type>
@@ -15,9 +15,9 @@ private:
    public:
       Node(const Type & data) : m_data(data) {}
 
-      Type & getData() { return m_data; }
-      bool setData(const Type & data);
+      Type & operator*() { return m_data; }
    };
+
 
    size_t m_size;
    size_t m_capacity;
@@ -34,6 +34,9 @@ public:
 
    void appendToEnd(const Type & data);
    Type & operator[](const size_t i);
+
+    Iterator<Node*, Type> begin() { return Iterator<Node*, Type>(m_arr); }
+    Iterator<Node*, Type> end() { return Iterator<Node*, Type>(m_arr + m_size); }
 };
 
 template <class Type>
@@ -81,14 +84,7 @@ Type & Vector<Type>::operator[](const size_t i)
    if (i > m_size)
    {
       std::cout << "i must be LESS than " << m_size << std::endl;
-      return m_arr[0]->getData();
+      return **(m_arr[0]);
    }
-   return m_arr[i]->getData();
-}
-
-template <class Type>
-bool Vector<Type>::Node::setData(const Type & data)
-{
-   m_data = data;
-   return true;
+   return **(m_arr[i]);
 }
