@@ -1,32 +1,22 @@
 #pragma once
 
-#include "Iterator.h"
+#include "Collection.h"
 #include <iostream>
 
 template <class Type>
-class Vector
+class Vector : public Collection<Type>
 {
 private:
-   class Node
-   {
-   private:
-      Type m_data;
-
-   public:
-      Node(const Type & data) : m_data(data) {}
-
-      Type & operator*() { return m_data; }
-   };
-
+   typedef Collection<Type>::Node Node;
+   typedef Collection<Type>::iterator iterator;
 
    size_t m_size;
    size_t m_capacity;
    Node** m_arr;
 
 public:
-   typedef Iterator<Node*, Type> iterator;
-
    Vector(const size_t capacity = 10);
+   // TODO: clone constructor
    ~Vector();
 
    void resize(const size_t capacity);
@@ -34,8 +24,10 @@ public:
    size_t size() const { return m_size; }
    size_t capacity() const { return m_capacity; }
 
+   void insert(const Type& data);
    void insert(const Type & data, const size_t ind);
    void remove(const size_t ind);
+   void clear();
    void appendToEnd(const Type & data);
    Type & operator[](const size_t i);
 
@@ -54,8 +46,7 @@ Vector<Type>::Vector(const size_t capacity)
 template <class Type>
 Vector<Type>::~Vector()
 {
-   for (size_t i = 0; i < m_size; i++)
-      delete m_arr[i];
+   clear();
    delete[] m_arr;
 }
 
@@ -100,6 +91,14 @@ void Vector<Type>::insert(const Type & data, const size_t ind)
 }
 
 template <class Type>
+void Vector<Type>::insert(const Type & data)
+{
+   if (m_size == m_capacity)
+      resize(m_capacity * 2);
+   appendToEnd(data);
+}
+
+template <class Type>
 void Vector<Type>::remove(const size_t ind)
 {
    if (m_size == 0)
@@ -119,6 +118,14 @@ void Vector<Type>::remove(const size_t ind)
 }
 
 template <class Type>
+void Vector<Type>::clear()
+{
+   m_size = 0;
+   for (size_t i = 0; i < m_size; i++)
+      delete m_arr[i];
+}
+
+template <class Type>
 void Vector<Type>::appendToEnd(const Type & data)
 {
    if (m_size == m_capacity)
@@ -129,7 +136,7 @@ void Vector<Type>::appendToEnd(const Type & data)
 template <class Type>
 Type & Vector<Type>::operator[](const size_t i)
 {
-   if (i > m_size)
+   if (i > m_size) //TODO: figure out if there is supposed to be >= or if > is fine
    {
       std::cout << "i must be LESS than " << m_size << std::endl;
       return **(m_arr[m_size - 1]);
