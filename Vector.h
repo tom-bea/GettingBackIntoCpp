@@ -82,9 +82,9 @@ template <class Type>
 Vector<Type>::Vector(Vector<Type>& other)
 {
    m_capacity = other.m_capacity;
-   m_size = other.m_size;
    m_arr = new Node*[m_capacity];
 
+   m_size = 0;
    for (Type x : other)
       this->appendToEnd(x);
 }
